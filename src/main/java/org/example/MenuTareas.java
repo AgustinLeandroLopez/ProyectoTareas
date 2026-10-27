@@ -16,7 +16,6 @@ import java.util.Scanner;
 public class MenuTareas {
     private final GestorTareas gestor;
     private final Scanner scanner;
-    // IDs de las tareas cuyo estado actual se guard? correctamente.
     private final List<Integer> idsGuardados = new ArrayList<>();
 
     public MenuTareas(GestorTareas gestor, Scanner scanner) {
