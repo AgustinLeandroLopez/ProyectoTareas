@@ -16,7 +16,7 @@ import java.util.Scanner;
 public class MenuTareas {
     private final GestorTareas gestor;
     private final Scanner scanner;
-    // IDs de las tareas cuyo estado actual se guardó correctamente.
+    // IDs de las tareas cuyo estado actual se guard? correctamente.
     private final List<Integer> idsGuardados = new ArrayList<>();
 
     public MenuTareas(GestorTareas gestor, Scanner scanner) {
@@ -67,14 +67,13 @@ public class MenuTareas {
     private void mostrarMenu() {
         System.out.println("\n========== MENU DE TAREAS ==========");
         System.out.println("Tareas actuales: " + gestor.getCantidadTareas() + "/" + gestor.getMaxTareas());
-        int guardadas = 0;
-        for (Tarea tarea : gestor.getTareas()) {
-            if (idsGuardados.contains(tarea.getId())) {
-                guardadas++;
-            }
-        }
+        // La lambda selecciona las tareas que todavia no se guardaron.
+        long pendientesDeGuardar = gestor.getTareas().stream()
+                .filter(tarea -> !idsGuardados.contains(tarea.getId()))
+                .count();
+        long guardadas = gestor.getCantidadTareas() - pendientesDeGuardar;
         System.out.println("Tareas pendientes de guardar: "
-                + (gestor.getCantidadTareas() - guardadas) + "/" + (gestor.getMaxTareas() - guardadas));
+                + pendientesDeGuardar + "/" + (gestor.getMaxTareas() - guardadas));
         System.out.println("1. Crear tarea");
         System.out.println("2. Mostrar tareas");
         System.out.println("3. Marcar tarea como completada");
