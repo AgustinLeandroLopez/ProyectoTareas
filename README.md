@@ -24,23 +24,21 @@ El proyecto no utiliza dependencias externas: únicamente emplea clases de la bi
 
 ```text
 ProyectoTareas/
-├── pom.xml
-├── README.md
-└── src/
-    ├── main/java/org/example/
-    │   ├── Main.java
-    │   ├── MenuTareas.java
-    │   ├── GestorTareas.java
-    │   └── Tarea.java
-    └── test/java/org/example/
-        └── AplicacionTareasTest.java
+|-- pom.xml
+|-- README.md
+`-- src/main/java/org/example/
+    |-- Main.java
+    |-- MenuTareas.java
+    |-- GestorTareas.java
+    |-- Tarea.java
+    |-- DescripcionVaciaException.java
+    `-- LimiteTareasException.java
 ```
 
 - `Main.java`: construye los objetos, inicia el menú y cierra el lector de teclado.
 - `MenuTareas.java`: muestra el menú, lee las entradas y presenta los resultados. Cada opción tiene su propio método y delega las operaciones en el gestor.
 - `GestorTareas.java`: administra la colección, el límite de cinco tareas, los identificadores y las operaciones de creación, consulta, completado y eliminación, sin depender de la consola.
 - `Tarea.java`: representa una tarea con identificador, descripción y estado de finalización.
-- `AplicacionTareasTest.java`: pruebas ejecutables sin dependencias externas.
 - `pom.xml`: configura el proyecto Maven y la compilación con Java 17.
 
 Esta separación aplica el principio de responsabilidad única: los cambios del menú no requieren modificar la gestión de tareas y `main` solo se encarga del arranque.
@@ -70,7 +68,7 @@ mvn compile
 java -cp target/classes org.example.Main
 ```
 
-## Compilar y probar sin Maven (PowerShell)
+## Compilar sin Maven (PowerShell)
 
 Desde la raíz del proyecto:
 
@@ -78,15 +76,6 @@ Desde la raíz del proyecto:
 javac -encoding UTF-8 -d target/classes src/main/java/org/example/*.java
 java -cp target/classes org.example.Main
 ```
-
-Para compilar y ejecutar las seis pruebas de gestión y menú:
-
-```powershell
-javac -encoding UTF-8 -d target/test-classes src/main/java/org/example/*.java src/test/java/org/example/*.java
-java -cp target/test-classes org.example.AplicacionTareasTest
-```
-
-El resultado esperado es `6 pruebas superadas.`. Son pruebas con un punto de entrada propio, no pruebas JUnit: deben ejecutarse con el comando anterior y no se ejecutan automáticamente con `mvn test`.
 
 ## Uso
 
@@ -120,5 +109,4 @@ Las tareas se mantienen únicamente en memoria, por lo que se pierden al cerrar 
 - No existe persistencia en archivos ni base de datos.
 - La interacción se realiza exclusivamente mediante la consola.
 - Los identificadores no se reutilizan después de eliminar una tarea durante la ejecución actual.
-- Las pruebas se ejecutan manualmente con Java; no están integradas en el ciclo de pruebas de Maven.
 
