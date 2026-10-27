@@ -222,9 +222,7 @@ public class MenuTareas {
 
     private void actualizarIdsGuardados() {
         idsGuardados.clear();
-        for (Tarea tarea : gestor.getTareas()) {
-            idsGuardados.add(tarea.getId());
-        }
+        gestor.getTareas().forEach(tarea -> idsGuardados.add(tarea.getId()));
     }
 
     private boolean cargarTareasDesdeArchivo() {
