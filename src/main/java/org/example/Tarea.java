@@ -13,19 +13,6 @@ public class Tarea {
     }
 
     //funciones
-    public void mostrarTarea() {
-        System.out.println("ID: " + id + ", Descripción: " + descripcion + ", Completada: " + completada);
-    }
-
-    public void eliminarTarea(int id) {
-        if (this.id == id) {
-            this.descripcion = null;
-            this.completada = false;
-            System.out.println("Tarea eliminada");
-        } else {
-            System.out.println("Tarea no encontrada");
-        }
-    }
 
     public void marcarComoCompletada() {
         this.completada = true;

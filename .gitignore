@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+# Archivos locales del IDE y datos de ejecucion
+.idea/
+tareas_guardadas.txt
