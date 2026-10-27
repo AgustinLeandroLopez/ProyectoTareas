@@ -9,8 +9,11 @@ Aplicación de consola desarrollada en Java para gestionar una lista sencilla de
 - Marcar tareas como completadas mediante su identificador.
 - Eliminar tareas mediante su identificador.
 - Validar opciones numéricas y descripciones vacías.
-- Limitar a un máximo de 5 tareas activas.
+- Limitar a un máximo de 10 tareas en la lista, incluidas las completadas.
 - Asignar identificadores consecutivos a las tareas.
+- Guardar y cargar tareas desde `tareas_guardadas.txt` con codificación UTF-8.
+- Utilizar lambdas para recorrer, filtrar y eliminar elementos.
+- Manejar errores con excepciones personalizadas y bloques `try-catch`.
 
 ## Requisitos
 
@@ -36,12 +39,14 @@ ProyectoTareas/
 ```
 
 - `Main.java`: construye los objetos, inicia el menú y cierra el lector de teclado.
-- `MenuTareas.java`: muestra el menú, lee las entradas y presenta los resultados. Cada opción tiene su propio método y delega las operaciones en el gestor.
-- `GestorTareas.java`: administra la colección, el límite de cinco tareas, los identificadores y las operaciones de creación, consulta, completado y eliminación, sin depender de la consola.
+- `MenuTareas.java`: muestra el menú, lee las entradas, presenta los resultados y gestiona la lectura y escritura del archivo. Delega las operaciones sobre las tareas en el gestor.
+- `GestorTareas.java`: administra la colección, el límite de diez tareas, los identificadores y las operaciones de creación, consulta, completado y eliminación, sin depender de la consola.
 - `Tarea.java`: representa una tarea con identificador, descripción y estado de finalización.
+- `DescripcionVaciaException.java`: indica que una descripción está vacía o es nula.
+- `LimiteTareasException.java`: indica que se alcanzó o superó el límite de tareas.
 - `pom.xml`: configura el proyecto Maven y la compilación con Java 17.
 
-Esta separación aplica el principio de responsabilidad única: los cambios del menú no requieren modificar la gestión de tareas y `main` solo se encarga del arranque.
+La gestión de la lista está separada de la interacción con la consola; `main` se encarga del arranque.
 
 ## Compilar el proyecto
 
@@ -82,13 +87,15 @@ java -cp target/classes org.example.Main
 Al iniciar la aplicación se muestra un menú similar al siguiente:
 
 ```text
-========== MENÚ DE TAREAS ==========
-Tareas actuales: 0/5
+========== MENU DE TAREAS ==========
+Tareas actuales: 0/10
+Tareas pendientes de guardar: 0/10
 1. Crear tarea
 2. Mostrar tareas
 3. Marcar tarea como completada
 4. Eliminar tarea
-5. Salir
+5. Guardar tareas pendientes
+6. Salir
 ====================================
 ```
 
@@ -98,15 +105,36 @@ Tareas actuales: 0/5
 2. Selecciona `2` para consultar las tareas existentes y sus identificadores.
 3. Selecciona `3` e introduce el ID de una tarea para marcarla como completada.
 4. Selecciona `4` e introduce el ID de una tarea para eliminarla.
-5. Selecciona `5` para salir.
+5. Selecciona `5` para guardar las tareas nuevas.
+6. Selecciona `6` para salir.
 
-Las tareas se mantienen únicamente en memoria, por lo que se pierden al cerrar la aplicación.
+## Persistencia y validaciones
 
+Al iniciar, se cargan las tareas de `tareas_guardadas.txt`. Si no existe, se inicia con una lista vacía. El archivo se busca y guarda en el directorio desde el que se ejecuta la aplicación.
+
+Cada línea contiene el identificador, la descripción y el estado, separados por punto y coma:
+
+```text
+1;Estudiar Java;Pendiente
+2;Repasar colecciones;Completada
+```
+
+La opción 5 guarda toda la lista actual. Completar o eliminar una tarea también guarda la lista. La opción 6 sale sin guardar automáticamente: antes de salir, usá la opción 5 para conservar las tareas nuevas.
+
+Se rechazan descripciones vacías o con punto y coma y se controlan las entradas numéricas. Al cargar el archivo se validan el formato, los estados, los identificadores positivos y no repetidos, las descripciones y el límite de tareas. Si se detectan datos inválidos, se informa el error y no se inicia el menú.
+
+## Lambdas utilizadas
+
+- `forEach(tarea -> idsGuardados.add(tarea.getId()))`: registra los identificadores guardados; la lambda actúa como un `Consumer<Tarea>`.
+- `filter(tarea -> !idsGuardados.contains(tarea.getId()))`: selecciona las tareas pendientes de guardar para contarlas; la lambda actúa como un `Predicate<Tarea>`.
+- `removeIf(tarea -> tarea.getId() == id)`: elimina la tarea con el identificador indicado mediante un predicado.
+- `forEach(tarea -> { ... })`: recorre las tareas para escribirlas en el archivo y comunica los errores de escritura.
 
 ## Limitaciones conocidas
 
-- Solo se pueden mantener 5 tareas a la vez.
-- No existe persistencia en archivos ni base de datos.
+- Solo se pueden mantener 10 tareas a la vez.
+- La persistencia es local en un archivo de texto; no se utiliza una base de datos.
 - La interacción se realiza exclusivamente mediante la consola.
 - Los identificadores no se reutilizan después de eliminar una tarea durante la ejecución actual.
+- Al cargar el archivo, el siguiente identificador se calcula a partir del mayor ID guardado.
 
